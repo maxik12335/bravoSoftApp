@@ -2,7 +2,6 @@ import http from "http";
 import fs from "fs";
 import mysql from "mysql";
 
-// Создание сервера
 const server = http.createServer((request, response) => { 
 
   if(request.url !== '/save-form' && request.url === '/') {
@@ -28,9 +27,6 @@ const server = http.createServer((request, response) => {
     })
 
     connUsers.query(`SELECT * FROM users`, (err, res) => {
-      console.log("err users", err)
-      console.log("res users", res)
-
       response.end(JSON.stringify(res))
     })
 
@@ -46,9 +42,6 @@ const server = http.createServer((request, response) => {
     })
 
     connDocs.query(`SELECT * FROM designer`, (err, res) => {
-      console.log("err docs", err)
-      console.log("res docs", res)
-
       response.end(JSON.stringify(res))
     })
 
@@ -63,10 +56,7 @@ const server = http.createServer((request, response) => {
       body = JSON.parse(chunk)
     })
     
-    request.on("end", () => {
-      console.log("body: ", body)
-      console.log("body select: ", body.select)
-      console.log("body inputDoc: ", body.inputDoc)    
+    request.on("end", () => {    
 
       let sqlGet = `SELECT * FROM designer WHERE name = "${body.select}" AND doc = "${body.inputDoc}"`;      
       let sqlAdd = `INSERT INTO designer (name, doc) VALUES ("${body.select}", "${body.inputDoc}")`; 
@@ -79,9 +69,6 @@ const server = http.createServer((request, response) => {
       })
 
       conn.query(sqlGet , (err, result) => {
-        console.log('err: ', err)
-        console.log("result: ", result)
-        console.log("result: ", result[0])
 
         if(result === undefined || result[0] === undefined) {
           
@@ -93,8 +80,6 @@ const server = http.createServer((request, response) => {
           })
 
           conn2.query(sqlAdd, (err, res) => {
-            console.log("err sqlAdd", err)
-            console.log("res sqlAdd", res)
             response.end(JSON.stringify({
               value: true,
               text: "Заявка добавлена !"
@@ -124,7 +109,4 @@ const server = http.createServer((request, response) => {
   }
 })
 
-// Создание слушателя host: 3001
-server.listen(3001, () => {
-  console.log("Server: start")
-}); 
+server.listen(3001, () => {}); 
